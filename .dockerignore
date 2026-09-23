@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+test_app.py
+requirements-dev.in
+requirements-dev.txt
+LEARNING.md
