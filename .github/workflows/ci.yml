@@ -37,3 +37,13 @@ jobs:
         with:
           name: sbom
           path: sbom.json
+
+      - name: Install Grype
+        run: curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Update Grype vulnerability database
+        run: grype db update
+
+      - name: Scan image for vulnerabilities with Grype
+        run: grype supply-chain-app:${{ github.sha }} --fail-on critical --output table
+        continue-on-error: true
