@@ -40,9 +40,9 @@ jobs:
 
       - name: Scan image for vulnerabilities with Grype
         uses: anchore/scan-action@v4
+        env:
+          GRYPE_DB_AUTO_UPDATE: "true"
         with:
           image: supply-chain-app:${{ github.sha }}
           fail-build: false
           severity-cutoff: critical
-          env:
-          GRYPE_DB_AUTO_UPDATE: "true"
