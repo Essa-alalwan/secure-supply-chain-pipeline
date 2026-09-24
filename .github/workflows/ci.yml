@@ -37,3 +37,10 @@ jobs:
         with:
           name: sbom
           path: sbom.json
+          
+      - name: Scan image for vulnerabilities with Grype
+        uses: anchore/scan-action@v4
+        with:
+          image: supply-chain-app:${{ github.sha }}
+          fail-build: false
+          severity-cutoff: critical
