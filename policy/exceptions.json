@@ -2,7 +2,7 @@
   "exceptions": [
     {
       "cve": "CVE-2026-82049",
-      "package": "python",
+      "pkg": "python",
       "reason": "Fix only available in a beta release (3.14.0b1). Base image uses stable 3.13.x. Will re-evaluate when a stable patch lands in the 3.13 line.",
       "reviewed_by": "Essa Alalwan",
       "date": "2026-09-25",

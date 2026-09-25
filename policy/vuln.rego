@@ -7,7 +7,7 @@ exceptions := data.exceptions.exceptions
 is_excepted(vuln) {
     some ex in exceptions
     ex.cve == vuln.vulnerability.id
-    ex.package == vuln.artifact.name
+    ex.pkg == vuln.artifact.name
     time.parse_rfc3339_ns(ex.expires) > time.now_ns()
 }
 
