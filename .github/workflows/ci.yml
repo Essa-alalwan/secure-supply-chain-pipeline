@@ -55,4 +55,4 @@ jobs:
           sudo mv conftest /usr/local/bin
 
       - name: Evaluate vulnerability policy with OPA/Conftest
-        run: conftest test grype-results.json --policy policy/vuln.rego
+        run: conftest test grype-results.json --policy policy/vuln.rego --data policy/exceptions.json
