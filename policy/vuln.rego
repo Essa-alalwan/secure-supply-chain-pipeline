@@ -1,5 +1,7 @@
 package main
 
+import future.keywords.in
+
 deny[msg] {
     some vuln in input.matches
     vuln.vulnerability.severity == "Critical"
