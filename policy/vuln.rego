@@ -2,7 +2,7 @@ package main
 
 import future.keywords.in
 
-exceptions := data.exceptions.exceptions
+exceptions := data.exceptions
 
 is_excepted(vuln) {
     some ex in exceptions
