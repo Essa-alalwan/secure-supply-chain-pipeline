@@ -2,6 +2,9 @@ name: CI
 
 on: push
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -19,6 +22,10 @@ jobs:
   build-and-sbom:
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -56,3 +63,31 @@ jobs:
 
       - name: Evaluate vulnerability policy with OPA/Conftest
         run: conftest test grype-results.json --policy policy/vuln.rego --data policy/exceptions.json
+
+      # Everything below only runs if the policy step above passed.
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image to GHCR
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker tag supply-chain-app:${{ github.sha }} "$IMAGE:${{ github.sha }}"
+          docker push "$IMAGE:${{ github.sha }}"
+          DIGEST_REF=$(docker inspect --format '{{index .RepoDigests 0}}' "$IMAGE:${{ github.sha }}")
+          echo "IMAGE_DIGEST_REF=$DIGEST_REF" >> "$GITHUB_ENV"
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image by digest (keyless)
+        run: cosign sign --yes "$IMAGE_DIGEST_REF"
+
+      - name: Verify signature
+        run: |
+          cosign verify "$IMAGE_DIGEST_REF" \
+            --certificate-identity-regexp '^https://github\.com/Essa-alalwan/secure-supply-chain-pipeline/\.github/workflows/ci\.yml@refs/.*' \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com
